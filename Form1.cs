@@ -90,7 +90,7 @@ namespace SerialTestTool
             System.Diagnostics.Debug.WriteLine($"nBytes: {nBytes}\nstartNum: {startNum} - endNum: {endNum}\ninterval: {interval}");
 
             this.statusInfo = "テスト中";
-            if (await sc.sendTestData(nBytes, startNum, endNum, interval))
+            if (await sc.sendTestData(nBytes, startNum, endNum, interval)) // テスト開始
             {
                 textBoxResult.ForeColor = Color.Blue;
                 textBoxResult.Text = "OK";

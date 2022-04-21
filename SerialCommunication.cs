@@ -17,13 +17,13 @@ namespace SerialTestTool
         // SerialPort用の変数
         public SerialPort serialPort;
         // 受信リングバッファ
-        private CircularBuffer<String> buffer = new CircularBuffer<string>(32768);
+        private CircularBuffer<String> buffer = new CircularBuffer<string>(1048576);
         // タイムアウトの設定(https://qiita.com/satorimon/items/8993a3b088ba602dfdda)
-        CancellationTokenSource source;
-        // 最後に受信したデータ
-        String lastData = "";
+        private CancellationTokenSource source;
+        // 受信データ
+        private string receivedData;
         // ストップウォッチ
-        Stopwatch stopWatch = new Stopwatch();
+        private Stopwatch stopWatch = new Stopwatch();
 
         /// <summary>
         /// インスタンスアクセス用メソッド
@@ -54,7 +54,8 @@ namespace SerialTestTool
         public bool connect(string portName)
         {
             this.disconnect(); // 既に開いている場合は閉じる
-            this.serialPort.BaudRate = 921600;
+            //this.serialPort.BaudRate = 9600;
+            this.serialPort.BaudRate = 3686400;
             this.serialPort.Parity = Parity.None;
             this.serialPort.StopBits = StopBits.One;
             this.serialPort.DataBits = 8;
@@ -91,10 +92,14 @@ namespace SerialTestTool
             for (int i = startNum; i < endNum; i++)
             {
                 String data = buffer.get();
-                if (i.ToString().PadLeft(nBytes, '0') != data) // データのチェック
+                if (!(i.ToString().PadLeft(nBytes, '0').Equals(data))) // データのチェック
                 {
-                    Debug.WriteLine($"actualy={i.ToString().PadLeft(nBytes, '0')} != data={data}");
+                    buffer.show(i + 2);
+                    Debug.WriteLine($"[NG] actualy={i.ToString().PadLeft(nBytes, '0')} != data={data}");
                     return false;
+                } else
+                {
+                    //Debug.WriteLine($"[OK] {i.ToString().PadLeft(nBytes, '0')} == data={data}");
                 }
             }
             return true;
@@ -112,10 +117,11 @@ namespace SerialTestTool
             try
             {
                 this.source = new CancellationTokenSource();
-                this.source.CancelAfter(5000); // タイムアウト5秒
+                this.source.CancelAfter(300000); // タイムアウト30秒
                 buffer.reset();
-                lastData = "";
+                receivedData = "";
                 stopWatch.Start();
+                serialPort.WriteLine("TEST");
                 for (int i = startNum; i < endNum; i++)
                 {
                     serialPort.WriteLine(i.ToString().PadLeft(nBytes, '0'));
@@ -124,6 +130,7 @@ namespace SerialTestTool
                 serialPort.WriteLine("OK");
                 if (await waitResponse("OK"))
                 {
+                    stopWatch.Stop(); // OKが返ってくるまでの時間
                     result = checkData(nBytes, startNum, endNum);
                 } else
                 {
@@ -138,7 +145,6 @@ namespace SerialTestTool
             {
                 this.source.Dispose();
             }
-            stopWatch.Stop();
             long elapsedMsec = stopWatch.ElapsedMilliseconds;
             this.form.setTextElapsed = $"{elapsedMsec}";
             this.form.setTextDataMsec = $"{(double)elapsedMsec / (endNum - startNum)}";
@@ -164,8 +170,16 @@ namespace SerialTestTool
                         while (true)
                         {
                             source.Token.ThrowIfCancellationRequested();
-                            if (lastData == res) // バッファ内の文字列とレスポンス文字列との比較
+                            if (receivedData.Contains(res)) // 受信データ内にレスポンス文字列が含まれるか
                             {
+                                //Debug.WriteLine($"received=\n{receivedData}");
+                                foreach (String data in receivedData.Split("\r")) // 改行ごとにリングバッファに挿入
+                                {
+                                    if (!(data.Equals("TEST") || data.Equals("OK")))
+                                    {
+                                        buffer.put(data);
+                                    }
+                                }
                                 return true;
                             }
                             Thread.Sleep(0);
@@ -183,6 +197,11 @@ namespace SerialTestTool
             return result;
         }
 
+        public void stopTest()
+        {
+            Debug.WriteLine(this.source.IsCancellationRequested);
+        }
+
         /// <summary>
         /// データ受信イベント
         /// <CR>まで読み込み、バッファに格納
@@ -193,11 +212,15 @@ namespace SerialTestTool
         {
             try
             {
-                lastData = this.serialPort.ReadExisting();
-                //lastData = this.serialPort.ReadLine();
-                buffer.put(lastData); // <CR>まで読み込み、バッファに格納
-                Debug.WriteLine(lastData); // DEBUG: dataを表示
-            } catch
+                while (this.serialPort.BytesToRead > 0)
+                {
+                    String data = this.serialPort.ReadExisting(); // ReadLineだと遅い
+                    receivedData += data; // 受信データを結合
+                    //Debug.WriteLine(data); // DEBUG: dataを表示
+                    //Debug.WriteLine("=================================");
+                }
+            }
+            catch
             {
 
             }

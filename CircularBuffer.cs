@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -123,20 +124,24 @@ namespace SerialTestTool
         /// <summary>
         /// 全ての要素の表示
         /// </summary>
-        public void show()
+        public void show(int stop = -1)
         {
             for (int i = 0; i < this.capacity; i++)
             {
-                Console.Write($"buffer[{i}]={this.buffer[i]}");
+                Debug.Write($"buffer[{i}]={this.buffer[i]}");
                 if (i == this.tail)
                 {
-                    Console.Write(" <- tail");
+                    Debug.Write(" <- tail");
                 }
                 if (i == this.head)
                 {
-                    Console.Write(" <- head");
+                    Debug.Write(" <- head");
                 }
-                Console.WriteLine();
+                Debug.WriteLine("");
+                if (stop  != -1 && i == stop)
+                {
+                    break;
+                }
             }
 
         }

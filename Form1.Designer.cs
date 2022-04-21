@@ -38,7 +38,6 @@
             this.buttonConnect = new System.Windows.Forms.Button();
             this.comboBoxCom = new System.Windows.Forms.ComboBox();
             this.buttonStart = new System.Windows.Forms.Button();
-            this.buttonStop = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.textBoxInterval = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -140,22 +139,13 @@
             // 
             // buttonStart
             // 
-            this.buttonStart.Location = new System.Drawing.Point(78, 381);
+            this.buttonStart.Location = new System.Drawing.Point(135, 382);
             this.buttonStart.Name = "buttonStart";
             this.buttonStart.Size = new System.Drawing.Size(75, 23);
             this.buttonStart.TabIndex = 9;
             this.buttonStart.Text = "テスト開始";
             this.buttonStart.UseVisualStyleBackColor = true;
             this.buttonStart.Click += new System.EventHandler(this.buttonStart_Click);
-            // 
-            // buttonStop
-            // 
-            this.buttonStop.Location = new System.Drawing.Point(216, 381);
-            this.buttonStop.Name = "buttonStop";
-            this.buttonStop.Size = new System.Drawing.Size(75, 23);
-            this.buttonStop.TabIndex = 10;
-            this.buttonStop.Text = "停止";
-            this.buttonStop.UseVisualStyleBackColor = true;
             // 
             // label5
             // 
@@ -217,14 +207,14 @@
             this.statusBar});
             this.statusStrip1.Location = new System.Drawing.Point(0, 419);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(345, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(365, 22);
             this.statusStrip1.TabIndex = 17;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // toolStripStatusLabelEmpty
             // 
             this.toolStripStatusLabelEmpty.Name = "toolStripStatusLabelEmpty";
-            this.toolStripStatusLabelEmpty.Size = new System.Drawing.Size(330, 17);
+            this.toolStripStatusLabelEmpty.Size = new System.Drawing.Size(350, 17);
             this.toolStripStatusLabelEmpty.Spring = true;
             // 
             // statusBar
@@ -263,18 +253,18 @@
             this.label11.AutoSize = true;
             this.label11.Location = new System.Drawing.Point(297, 338);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(22, 15);
+            this.label11.Size = new System.Drawing.Size(50, 15);
             this.label11.TabIndex = 23;
-            this.label11.Text = "ms";
+            this.label11.Text = "data/ms";
             // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(176, 338);
+            this.label12.Location = new System.Drawing.Point(117, 338);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(53, 15);
+            this.label12.Size = new System.Drawing.Size(112, 15);
             this.label12.TabIndex = 22;
-            this.label12.Text = "データ/ms";
+            this.label12.Text = "データ一つの往復時間";
             // 
             // textBoxDataMsec
             // 
@@ -288,7 +278,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(345, 441);
+            this.ClientSize = new System.Drawing.Size(365, 441);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.textBoxDataMsec);
@@ -302,7 +292,6 @@
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.textBoxInterval);
-            this.Controls.Add(this.buttonStop);
             this.Controls.Add(this.buttonStart);
             this.Controls.Add(this.comboBoxCom);
             this.Controls.Add(this.buttonConnect);
